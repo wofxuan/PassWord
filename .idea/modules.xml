@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/MaterialPreference/MaterialPreference.iml" filepath="$PROJECT_DIR$/MaterialPreference/MaterialPreference.iml" />
       <module fileurl="file://$PROJECT_DIR$/PassWord.iml" filepath="$PROJECT_DIR$/PassWord.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mxlib/mxlib.iml" filepath="$PROJECT_DIR$/mxlib/mxlib.iml" />
     </modules>
   </component>
 </project>
