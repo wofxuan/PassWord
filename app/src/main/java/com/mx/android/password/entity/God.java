@@ -4,6 +4,7 @@ import com.mx.android.password.utils.Utils;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by mxuan on 2016-07-11.
@@ -19,6 +20,7 @@ public class God extends RealmObject {
      * 标题，注明该账号为哪个网站的账号
      */
     @PrimaryKey
+    @Required
     private String title;
 
     /**

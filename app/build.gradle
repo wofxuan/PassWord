@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 23
@@ -31,10 +32,18 @@ android {
     }
 }
 
+repositories {  //添加stetho-realm代码仓库地址
+    maven {
+        url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile project(':MaterialPreference')    //    compile 'com.umeng:fb:5.4.0'
+    compile project(':MaterialPreference')
+    compile project(':mxlib')
+    //compile 'com.umeng:fb:5.4.0'
     compile 'com.balysv:material-ripple:1.0.2'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
@@ -44,10 +53,12 @@ dependencies {
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'io.realm:realm-android:0.87.0'
+//    compile 'io.realm:realm-android:0.87.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'me.imid.swipebacklayout.lib:library:1.0.0'
     compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
+    compile 'com.facebook.stetho:stetho:1.4.1'
+    compile 'com.uphyca:stetho_realm:2.0.0'
     compile files('libs/sunjce_provider.jar')
 }

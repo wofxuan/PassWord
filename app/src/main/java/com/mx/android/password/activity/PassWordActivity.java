@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.mx.mxlib.DFSelectActivity;
 import com.jakewharton.rxbinding.view.RxView;
 import com.mx.android.password.R;
 import com.mx.android.password.activity.base.BaseActivity;
@@ -24,7 +25,6 @@ import com.mx.android.password.customview.PassWordAView;
 import com.mx.android.password.entity.Constants;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.presenter.PassWordPreImpl;
-import com.mx.android.password.utils.DFSelectActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -198,7 +198,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             Intent intent = new Intent(this, DFSelectActivity.class);
             intent.putExtra("type", 1);
             intent.putExtra("defaultDir", this.getFilesDir().toString());
-//            intent.putExtra("fileType", [""]);
+            intent.putExtra("fileType", new String[]{"realm"}) ;
             intent.putExtra("result_code", RESTORE_REQUEST_CODE);
             startActivityForResult(intent, RESTORE_REQUEST_CODE);
         });

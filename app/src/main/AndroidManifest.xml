@@ -17,7 +17,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/DeepPurpleTheme">
+        android:theme="@style/DeepPurpleTheme"
+        android:name="com.mx.android.password.utils.MyApplication">
         <activity android:name=".activity.CreateLockActivity" />
         <activity
             android:name=".activity.PassWordActivity"
@@ -40,7 +41,6 @@
             android:launchMode="singleTop" />
         <activity android:name=".activity.CheckLockActivity" />
         <activity android:name=".activity.ImgActivity"></activity>
-        <activity android:name=".utils.DFSelectActivity"></activity>
     </application>
 
 </manifest>
