@@ -83,9 +83,8 @@ public class EditAImpl implements ActivityPresenter,
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String titleName = mEditAView.getTitleName();
-        String userName = mEditAView.getUserName();
-        String passWord = mEditAView.getPassWord();
-        if (!TextUtils.isEmpty(titleName)) {
+        String accountType = mEditAView.getAccountType();
+        if (!TextUtils.isEmpty(titleName) && !TextUtils.isEmpty(accountType) ) {
             mEditAView.setItemMenuVisible(true, R.id.done);
         } else {
             mEditAView.setItemMenuVisible(false, R.id.done);
@@ -155,7 +154,7 @@ public class EditAImpl implements ActivityPresenter,
                 account.setRowIndex(PWDBHelper.getMaxIndex(mContext));
                 account.setGuidPW(UUID.randomUUID().toString().toUpperCase());
                 if (!PWDBHelper.save(mContext, account)) {
-                    mEditAView.showSnackToast("保存失败，已经存在-" + account.getTitle() + "-的标题");
+                    mEditAView.showSnackToast("保存失败，重新登录");
                     mEditAView.hideKeyBoard();
                     return;
                 }
