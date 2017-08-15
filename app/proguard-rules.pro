@@ -165,16 +165,6 @@
     @org.simple.eventbus.Subscriber <methods>;
 }
 
-# 百度地图（jar包换成自己的版本，记得签名要匹配）
--libraryjars libs/baidumapapi_v2_1_3.jar
--keep class com.baidu.** {*;}
--keep class vi.com.** {*;}
--keep class com.sinovoice.** {*;}
--keep class pvi.com.** {*;}
--dontwarn com.baidu.**
--dontwarn vi.com.**
--dontwarn pvi.com.**
-
 # Bugly
 -dontwarn com.tencent.bugly.**
 -keep class com.tencent.bugly.** {*;}
@@ -204,14 +194,6 @@
   **[] $VALUES;
   public *;
 }
-
-# Gson
--keepattributes Signature-keepattributes *Annotation*
--keep class sun.misc.Unsafe { *;}
--keep class com.google.gson.stream.** { *;}
-# 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
-# 将下面替换成自己的实体类
--keep class com.example.bean.** { *;}
 
 # 极光推送
 -dontoptimize
@@ -286,3 +268,8 @@
 -dontwarn com.ut.**
 -keep class com.ta.** {*;}
 -dontwarn com.ta.**
+
+# 引用的包
+-dontwarn org.codehaus.**
+-dontwarn java.nio.**
+-dontwarn java.lang.invoke.**

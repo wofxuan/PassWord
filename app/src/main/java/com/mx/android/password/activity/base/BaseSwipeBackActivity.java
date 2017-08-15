@@ -14,16 +14,15 @@ import com.mx.android.password.R;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.utils.ThemeUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-//import com.umeng.analytics.MobclickAgent;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import butterknife.ButterKnife;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.Utils;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
+
+//import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by mxuan on 2016-07-12.
@@ -160,8 +159,8 @@ public abstract class BaseSwipeBackActivity extends Base implements SwipeBackAct
 
     @Override
     protected void onDestroy() {
-        if (isApplyButterKnife()) ButterKnife.unbind(this);
-        if (isApplyEventBus()) EventBus.getDefault().unregister(this);
+//        if (isApplyButterKnife()) ButterKnife.unbind(this);
+//        if (isApplyEventBus()) EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

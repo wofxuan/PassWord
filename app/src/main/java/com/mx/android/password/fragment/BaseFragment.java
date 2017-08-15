@@ -12,11 +12,11 @@ import com.mx.android.password.entity.EventCenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Field;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by mxuan on 2016-07-11.
@@ -27,6 +27,7 @@ public abstract class BaseFragment extends Fragment {
     private boolean isFirstVisible = true;
     private boolean isFirstInvisible = true;
     private boolean isPrepared;
+    private Unbinder binder;
 
     @Nullable
     @Override
@@ -38,7 +39,7 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mActivity = getActivity();
-        if (isApplyButterKnife()) ButterKnife.bind(this, view);
+        if (isApplyButterKnife()) binder = ButterKnife.bind(this, view);
         if (isApplyEventBus()) EventBus.getDefault().register(this);
     }
 
@@ -61,7 +62,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         if (isApplyEventBus()) EventBus.getDefault().unregister(this);
-        if (isApplyButterKnife()) ButterKnife.unbind(this);
+        if (isApplyButterKnife()) binder.unbind();
         super.onDestroyView();
 
     }

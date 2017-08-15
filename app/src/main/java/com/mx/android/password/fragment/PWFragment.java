@@ -19,7 +19,9 @@ import com.mx.android.password.presenter.PassWordFImpl;
 
 import org.greenrobot.eventbus.EventBus;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
+//import butterknife.Bind;
 
 /**
  * Created by mxuan on 2016-07-11.
@@ -28,9 +30,9 @@ public class PWFragment extends BaseFragment implements LoginTypeFView {
     private static final int INDEX_FRAGMENT_REQUEST_CODE = 2;
     private static final int EDIT_SAVE = 1;
     private static final int SUCCESS = 1;
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @Bind(R.id.exception)
+    @BindView(R.id.exception)
     LinearLayout mException;
     private PassWordFImpl mIndexFImpl;
     private ItemTouchHelper mItemTouchHelper;
@@ -46,13 +48,14 @@ public class PWFragment extends BaseFragment implements LoginTypeFView {
     }
 
     @Override
-    public void runUi(RecyclerView.Adapter adapter){
+    public void runUi(RecyclerView.Adapter adapter) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
             }
-        });}
+        });
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

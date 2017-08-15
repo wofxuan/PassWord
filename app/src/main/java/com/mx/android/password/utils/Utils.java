@@ -7,8 +7,6 @@ import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.mx.android.password.utils.encrypt.DesUtils;
-
 /**
  * Created by mxuan on 2016-07-11.
  */
@@ -48,15 +46,15 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
-    public static String EncData(String str) {
-        return DesUtils.EncStr(str);
+//    public static String EncData(String str) {
+//        return DesUtils.EncStr(str);
 //        return Base64Util.encryptBASE64(str);
-    }
+//    }
 
-    public static String DecData(String str) {
-        return DesUtils.DecStr(str);
+//    public static String DecData(String str) {
+//        return DesUtils.DecStr(str);
 //        return Base64Util.decryptBASE64(str);
-    }
+//    }
 
     public static Boolean StringEmpty(String str) {
         return (str == null) || (str.equals(""));
