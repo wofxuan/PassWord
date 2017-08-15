@@ -3,13 +3,19 @@ package com.mx.android.password.presenter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.NavigationView;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
+import com.alibaba.sdk.android.feedback.util.IUnreadCountCallback;
 import com.mx.android.password.R;
 import com.mx.android.password.customview.PassWordAView;
+import com.mx.android.password.db.PWDBHelper;
+import com.mx.android.password.entity.Constants;
 import com.mx.android.password.entity.EventCenter;
-import com.mx.android.password.entity.RealmHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -21,7 +27,7 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
     private static long DOUBLE_CLICK_TIME = 0L;
     private final Context mContext;
     private final PassWordAView mIndexView;
-    private int currentSelectedItem = 0;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     public PassWordPreImpl(Context context, PassWordAView view) {
         this.mContext = context;
@@ -41,14 +47,11 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.nav_backup:
-                currentSelectedItem = 0;
                 mIndexView.backup();
                 break;
             case R.id.nav_restore:
-                currentSelectedItem = 1;
                 mIndexView.restore();
                 break;
             case R.id.nav_setting:
@@ -57,7 +60,7 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
             default:
                 break;
         }
-        item.setChecked(false);
+        mIndexView.closeNavTool();
         return true;
     }
 
@@ -72,12 +75,45 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
     }
 
     public void backup(String dirPath) {
-        RealmHelper.backup(mContext, dirPath);
+        PWDBHelper.backup(mContext, dirPath);
     }
 
     public void restore(String filePath) {
-        RealmHelper.restore(mContext, filePath);
-        EventCenter eventCenter = new EventCenter(1, true);
+        PWDBHelper.restore(mContext, filePath);
+        try {
+            Thread.currentThread().sleep(100);//阻断 还原后马上查询数据库可能出错
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        EventCenter eventCenter = new EventCenter(Constants.EVEN_BUS.INDEX_EVENT_SUCCESS, true);
         EventBus.getDefault().post(eventCenter);
+    }
+
+    public void getFeedbackUnreadCount() {
+        //如果500ms内init未完成, openFeedbackActivity会失败, 可以延长时间>500ms
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FeedbackAPI.getFeedbackUnreadCount(new IUnreadCountCallback() {
+                    @Override
+                    public void onSuccess(final int unreadCount) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (unreadCount <= 0) return;
+                                Toast toast = Toast.makeText(mContext, "发现未读的反馈，未读数：" + unreadCount,
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                                FeedbackAPI.openFeedbackActivity();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                    }
+                });
+            }
+        }, 5000);
     }
 }

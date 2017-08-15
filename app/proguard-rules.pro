@@ -276,3 +276,13 @@
 -keep class com.alipay.sdk.app.AuthTask{ public *;}
 -keep class com.alipay.mobilesecuritysdk.*
 -keep class com.ut.*
+
+# 阿里云反馈
+-keep class com.taobao.** {*;}
+-keep class com.alibaba.** {*;}
+-dontwarn com.taobao.**
+-dontwarn com.alibaba.**
+-keep class com.ut.** {*;}
+-dontwarn com.ut.**
+-keep class com.ta.** {*;}
+-dontwarn com.ta.**

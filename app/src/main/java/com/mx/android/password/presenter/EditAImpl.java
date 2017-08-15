@@ -13,11 +13,13 @@ import android.widget.AdapterView;
 
 import com.mx.android.password.R;
 import com.mx.android.password.customview.EditAView;
-import com.mx.android.password.entity.God;
-import com.mx.android.password.entity.RealmHelper;
+import com.mx.android.password.db.PWDBHelper;
+import com.mx.android.password.entity.Account;
 import com.mx.android.password.utils.TimeUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
@@ -30,14 +32,12 @@ public class EditAImpl implements ActivityPresenter,
 
     private final Context mContext;
     private final EditAView mEditAView;
-    private int mPosition = 0;
     private int createMode;
     private boolean isEdit;
     private boolean isCreate;
-    private God mGodInfo;
-    private int positionType;
+    private Account mAccountInfo;
     private String mPositiveButtonMsg;
-    private int p;
+    private String mGuidPW;
 
     public EditAImpl(Context context, EditAView view) {
         mContext = context;
@@ -55,14 +55,13 @@ public class EditAImpl implements ActivityPresenter,
         createMode = intent.getIntExtra("CREATE_MODE", 1);
         switch (createMode) {
             case 0:// 查看
-                p = intent.getIntExtra("position", 0);
+                mGuidPW = intent.getStringExtra("GuidPW");
                 // 密码类型
-                mPosition = positionType = intent.getIntExtra("positionType", 0);
-                ArrayList<God> selector = selector(positionType);
-                mGodInfo = selector.get(p);
-                mEditAView.initViewModel(mGodInfo, positionType);
+                ArrayList<Account> selector = selector(mGuidPW);
+                mAccountInfo = selector.get(0);
+                mEditAView.initViewModel(mAccountInfo);
                 mEditAView.setToolBarTitle(R.string.view_mode);
-                mEditAView.setTime(TimeUtils.getTime(mGodInfo.getTime()));
+                mEditAView.setTime(mAccountInfo.getTime());
                 isEdit = false;
                 break;
             case 1:// 添加
@@ -72,8 +71,8 @@ public class EditAImpl implements ActivityPresenter,
         }
     }
 
-    private ArrayList<God> selector(int positionType) {
-        return RealmHelper.getInstances(mContext).selector(mContext, positionType);
+    private ArrayList<Account> selector(String GuidPW) {
+        return PWDBHelper.selector(mContext, GuidPW);
     }
 
     @Override
@@ -118,8 +117,9 @@ public class EditAImpl implements ActivityPresenter,
         if (isEdit) {
             String userName = mEditAView.getUserName();
             String passWord = mEditAView.getPassWord();
+            String accountType = mEditAView.getAccountType();
             mEditAView.hideKeyBoard();
-            if (positionType != mPosition || !TextUtils.equals(userName, mGodInfo.getUserName()) || !TextUtils.equals(passWord, mGodInfo.getPassWord())) {
+            if (!TextUtils.equals(userName, mAccountInfo.getUserName()) || !TextUtils.equals(passWord, mAccountInfo.getPassWord())) {
                 mPositiveButtonMsg = "保存";
                 mEditAView.showDialog("密码还未保存，是否先保存在退出", mPositiveButtonMsg);
             } else {
@@ -137,21 +137,25 @@ public class EditAImpl implements ActivityPresenter,
         String userName = mEditAView.getUserName();
         String passWord = mEditAView.getPassWord();
         String memoInfo = mEditAView.getMemoInfo();
+        String accountType = mEditAView.getAccountType();
         byte[] img = mEditAView.getImg();
 
-        God god = new God(mPosition, titleName, userName, passWord, TimeUtils.getCurrentTimeInLong(), memoInfo);
-        god.setImg(img);
+        Account account = new Account(accountType, titleName, userName, passWord, TimeUtils.getCurrentTimeInString(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")), memoInfo);
+        account.setImg(img);
         switch (createMode) {
             case 0:
-                if (!RealmHelper.update(mContext, god)) {
+                account.setGuidPW(mEditAView.getGuidPW());
+                if (!PWDBHelper.updateAccount(mContext, account)) {
                     mEditAView.showSnackToast("修改失败");
                     mEditAView.hideKeyBoard();
                     return;
                 }
                 break;
             case 1:
-                if (RealmHelper.save(mContext, god)) {
-                    mEditAView.showSnackToast("保存失败，已经存在-" + god.getTitle() + "-的标题");
+                account.setRowIndex(PWDBHelper.getMaxIndex(mContext));
+                account.setGuidPW(UUID.randomUUID().toString().toUpperCase());
+                if (!PWDBHelper.save(mContext, account)) {
+                    mEditAView.showSnackToast("保存失败，已经存在-" + account.getTitle() + "-的标题");
                     mEditAView.hideKeyBoard();
                     return;
                 }
@@ -165,7 +169,7 @@ public class EditAImpl implements ActivityPresenter,
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         isEdit = true;
-        mPosition = position;
+//        mPosition = position;
     }
 
     @Override
@@ -185,7 +189,7 @@ public class EditAImpl implements ActivityPresenter,
     public void onClick(DialogInterface dialog, int which) {
         if (which == dialog.BUTTON_POSITIVE) {
             if (TextUtils.equals(mPositiveButtonMsg, "确定")) {
-                RealmHelper.delete(mContext, mGodInfo, p);
+                PWDBHelper.delete(mContext, mAccountInfo);
                 mEditAView.finishActivity();
             } else {
                 saveData();

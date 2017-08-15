@@ -25,39 +25,52 @@ import com.mx.android.password.customview.PassWordAView;
 import com.mx.android.password.entity.Constants;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.presenter.PassWordPreImpl;
+import com.mx.android.password.utils.MyApplication;
+import com.mx.android.password.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.mx.android.password.entity.Constants.EVEN_BUS.FILTER_EVENT_SUCCESS;
+import static com.mx.android.password.entity.Constants.EVEN_BUS.INDEX_EVENT_SUCCESS;
+import static com.mx.android.password.presenter.FilterImpl.FILTERALL;
 
 public class PassWordActivity extends BaseActivity implements PassWordAView {
     private static final int INDEX_REQUEST_CODE = 1;
     private static final int SETTING_REQUEST_CODE = 2;
     private static final int BACKUP_REQUEST_CODE = 3;
     private static final int RESTORE_REQUEST_CODE = 4;
+    private static final int FILTER_REQUEST_CODE = 5;
     private static final int EDIT_SAVE = 1;
     private int SUCCESS = 1;
     private PassWordPreImpl mIndexPre;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
-    private int INDEX_EVENT_SUCCESS = 1;
+    private DrawerLayout drawerLayout_main;
+    private NavigationView navigationView;
+    private Toolbar mToolBar;
+    private MenuItem mMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        drawerLayout_main = (DrawerLayout) findViewById(R.id.drawerLayout);
+
         mIndexPre = new PassWordPreImpl(this, this);
         mIndexPre.onCreate(savedInstanceState);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         RxView.clicks(fab).throttleFirst(500, TimeUnit.MILLISECONDS).subscribe((aVoid) -> this.readyGoForResult(EditActivity.class));
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
+        navigationView = (NavigationView) findViewById(R.id.navigationView);
 //        navigationView.setCheckedItem(R.id.nav_login_type);
         navigationView.setNavigationItemSelectedListener(mIndexPre);
+
+        mIndexPre.getFeedbackUnreadCount();
     }
 
     @Override
     protected void initToolbar() {
-        Toolbar  mToolBar = (android.support.v7.widget.Toolbar) findViewById(R.id.common_toolbar);
-
+        mToolBar = (android.support.v7.widget.Toolbar) findViewById(R.id.common_toolbar);
         super.initToolBar(mToolBar);
     }
 
@@ -83,8 +96,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
 
     @Override
     public void initDrawerToggle() {
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, (DrawerLayout) findViewById(R.id.drawerLayout),
-                (Toolbar) findViewById(R.id.common_toolbar), 0, 0) {
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout_main, (Toolbar) findViewById(R.id.common_toolbar), 0, 0) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -96,7 +108,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             }
         };
         mActionBarDrawerToggle.setDrawerIndicatorEnabled(true);
-        ((DrawerLayout) findViewById(R.id.drawerLayout)).setDrawerListener(mActionBarDrawerToggle);
+        drawerLayout_main.setDrawerListener(mActionBarDrawerToggle);
     }
 
     @Override
@@ -112,6 +124,11 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
         Intent intent = new Intent(this, clazz);
         intent.putExtra("CREATE_MODE", Constants.CREATE_MODE);
         startActivityForResult(intent, INDEX_REQUEST_CODE);
+    }
+
+    @Override
+    public void closeNavTool() {
+        drawerLayout_main.closeDrawer(navigationView);
     }
 
     @Override
@@ -133,24 +150,25 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMenuItem = menu.findItem(R.id.action_more);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.setting:
-                SysSetting();
-                return true;
-            case R.id.about:
-//                Intent intent = new Intent(this, AboutActivity.class);
-//                startActivity(intent);
-                return true;
-            case R.id.exitApp:
-                kill();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+//        switch (item.getItemId()) {
+//            case R.id.setting:
+//                SysSetting();
+//                return true;
+//            case R.id.filter:
+        Intent intent = new Intent(this, FilterActivity.class);
+        startActivityForResult(intent, FILTER_REQUEST_CODE);
+        return true;
+//            case R.id.exitApp:
+//                kill();
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -161,7 +179,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
 
     @Override
     public void showSnackBar(String msg) {
-        Toolbar  mToolBar = (android.support.v7.widget.Toolbar) findViewById(R.id.common_toolbar);
+        Toolbar mToolBar = (android.support.v7.widget.Toolbar) findViewById(R.id.common_toolbar);
         Snackbar.make(mToolBar, msg, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -171,7 +189,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
     }
 
     @Override
-    public void backup(){
+    public void backup() {
         android.support.v7.app.AlertDialog.Builder builder = null;
         builder = new android.support.v7.app.AlertDialog.Builder(this);
         builder.setTitle("备份");
@@ -181,14 +199,14 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             Intent intent = new Intent(this, DFSelectActivity.class);
             intent.putExtra("type", 2);
             intent.putExtra("result_code", BACKUP_REQUEST_CODE);
-            intent.putExtra("defaultDir", this.getFilesDir().toString());
+            intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
             startActivityForResult(intent, BACKUP_REQUEST_CODE);
         });
         builder.show();
-    };
+    }
 
     @Override
-    public void restore(){
+    public void restore() {
         android.support.v7.app.AlertDialog.Builder builder = null;
         builder = new android.support.v7.app.AlertDialog.Builder(this);
         builder.setTitle("还原");
@@ -197,18 +215,25 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
         builder.setPositiveButton("确定", (DialogInterface dialog, int which) -> {
             Intent intent = new Intent(this, DFSelectActivity.class);
             intent.putExtra("type", 1);
-            intent.putExtra("defaultDir", this.getFilesDir().toString());
-            intent.putExtra("fileType", new String[]{"realm"}) ;
+            intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
+            intent.putExtra("fileType", new String[]{"db"});
             intent.putExtra("result_code", RESTORE_REQUEST_CODE);
             startActivityForResult(intent, RESTORE_REQUEST_CODE);
         });
         builder.show();
-    };
+    }
+
     @Override
     protected void onEventComing(EventCenter eventCenter) {
         if (eventCenter.getEventCode() == Constants.EVEN_BUS.CHANGE_THEME) {
             reload(false);
         }
+    }
+
+    protected void setFilterTitle(String Title){
+        if(Title.equals("")) Title = getString(R.string.app_name);
+//        mMenuItem.setTitle(Title);
+        mToolBar.setTitle(Title);
     }
 
     @Override
@@ -218,22 +243,38 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             if (resultCode == EDIT_SAVE && resultCode == SUCCESS) {
                 EventCenter eventCenter = new EventCenter(INDEX_EVENT_SUCCESS, true);
                 EventBus.getDefault().post(eventCenter);
+                setFilterTitle(getString(R.string.app_name));
             }
         } else if (requestCode == SETTING_REQUEST_CODE) {
 
-        } else if (requestCode == BACKUP_REQUEST_CODE){
-            mIndexPre.backup(data.getStringExtra("selectPath"));
-        } else if (requestCode == RESTORE_REQUEST_CODE){
-            mIndexPre.restore("");
+        } else {
+            if (data == null) return;
+            if (requestCode == BACKUP_REQUEST_CODE) {
+                String selectPath = data.getStringExtra("selectPath");
+                if (Utils.StringEmpty(selectPath)) return;
+                mIndexPre.backup(selectPath);
+
+            } else if (requestCode == RESTORE_REQUEST_CODE) {
+                String filePath = data.getStringExtra("selectPath");
+                if (Utils.StringEmpty(filePath)) return;
+                mIndexPre.restore(filePath);
+            } else if (requestCode == FILTER_REQUEST_CODE) {
+                String accountType = data.getStringExtra("accountType");
+                if (Utils.StringEmpty(accountType)) return;
+                if(accountType.equals(FILTERALL)) accountType = "";
+                EventCenter eventCenter = new EventCenter(FILTER_EVENT_SUCCESS, accountType);
+                EventBus.getDefault().post(eventCenter);
+                setFilterTitle(accountType);
+            }
         }
     }
 
     @Override
     public void onBackPressed() {
-        android.support.v4.widget.DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
+        android.support.v4.widget.DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-            return ;
+            return;
         }
 
         if (mIndexPre.onBackPress()) {

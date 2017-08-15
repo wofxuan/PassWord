@@ -57,4 +57,8 @@ public class Utils {
         return DesUtils.DecStr(str);
 //        return Base64Util.decryptBASE64(str);
     }
+
+    public static Boolean StringEmpty(String str) {
+        return (str == null) || (str.equals(""));
+    }
 }

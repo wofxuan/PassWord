@@ -8,7 +8,10 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface LoginTypeFView {
     void initRecycler(LinearLayoutManager linearLayoutManager, RecyclerView.Adapter adapter);
-    void readGo(Class clazz, int type, int position, int positionType);
+    void readGo(Class clazz, int type, String mGuidPW);
     void hideException();
     void showException();
+    void startDrag(RecyclerView.ViewHolder viewHolder);//拖动移动位置
+    void setToolBar(String mTitle);//设置标题
+    void runUi(RecyclerView.Adapter adapter);//更新UI
 }

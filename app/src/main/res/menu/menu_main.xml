@@ -4,19 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_more"
-        android:icon="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-        android:title="more"
+        android:title="筛选"
         app:showAsAction="ifRoom">
-        <menu>
-            <item
-                android:id="@+id/setting"
-                android:title="设置" />
-            <item
-                android:id="@+id/about"
-                android:title="关于" />
-            <item
-                android:id="@+id/exitApp"
-                android:title="退出" />
-        </menu>
+        <!--android:icon="@mipmap/ic_filter"-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/setting"-->
+                <!--android:title="设置" />-->
+            <!--<item-->
+                <!--android:id="@+id/filter"-->
+                <!--android:title="筛选" />-->
+            <!--<item-->
+                <!--android:id="@+id/exitApp"-->
+                <!--android:title="退出" />-->
+        <!--</menu>-->
     </item>
 </menu>

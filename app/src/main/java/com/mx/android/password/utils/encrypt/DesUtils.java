@@ -16,7 +16,7 @@ public class DesUtils {
     /**
      * 字符串默认键值
      */
-    private static String strDefaultKey = "hdfgdrglk";
+    public static String strDefaultKey;
 
     /**
      * 加密工具

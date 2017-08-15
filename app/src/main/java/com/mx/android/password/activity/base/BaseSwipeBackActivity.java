@@ -14,7 +14,7 @@ import com.mx.android.password.R;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.utils.ThemeUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.umeng.analytics.MobclickAgent;
+//import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -148,13 +148,13 @@ public abstract class BaseSwipeBackActivity extends Base implements SwipeBackAct
 
     @Override
     protected void onResume() {
-        MobclickAgent.onResume(this);
+//        MobclickAgent.onResume(this);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        MobclickAgent.onPause(this);
+//        MobclickAgent.onPause(this);
         super.onPause();
     }
 

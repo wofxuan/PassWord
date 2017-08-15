@@ -1,39 +1,60 @@
 package com.mx.android.password.adapter;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 
 import com.mx.android.password.R;
+import com.mx.android.password.customview.onMoveAndSwipedListener;
+import com.mx.android.password.entity.Account;
 import com.mx.android.password.entity.Constants;
-import com.mx.android.password.entity.God;
+import com.mx.android.password.entity.LoginTypeFView;
 import com.mx.android.password.utils.SPUtils;
-import com.mx.android.password.utils.TimeUtils;
 import com.mx.android.password.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by mxuan on 2016-07-11.
  */
-public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> {
+public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> implements onMoveAndSwipedListener {
     private final Context mContext;
-    private List<God> mGodList = new ArrayList<>();
+    private List<Account> mAccountList = new ArrayList<>();
     private OnRecyclerItemClickListener listener;
     private boolean isOpen;
     private int lastAnimatedPosition = -1;
+    private LoginTypeFView mLoginTypeFView;
 
-    public PWViewAdapter(Context context, ArrayList<God> godArrayList) {
+    public PWViewAdapter(Context context, ArrayList<Account> accountArrayList, LoginTypeFView view) {
         mContext = context;
-        if (godArrayList != null) {
-            mGodList.addAll(godArrayList);
+        if (accountArrayList != null) {
+            mAccountList.addAll(accountArrayList);
         }
+        mLoginTypeFView = view;
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        //交换mItems数据的位置
+        Collections.swap(mAccountList, fromPosition, toPosition);
+        //交换RecyclerView列表中item的位置
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        //删除mItems数据
+        mAccountList.remove(position);
+        //删除RecyclerView列表对应item
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -45,34 +66,21 @@ public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> {
     @Override
     public void onBindViewHolder(PWViewHolder holder, int position) {
         runEnterAnimation(holder.itemView, position);
-        holder.setLabelText(mGodList.get(position).getTitle());
-        holder.setContentText(mGodList.get(position).getUserName());
+        holder.setLabelText(mAccountList.get(position).getTitle());
+        holder.setContentText(mAccountList.get(position).getUserName());
         if (isOpen) {
-            holder.setPassWordTextView(mGodList.get(position).getPassWord());
+            holder.setPassWordTextView(mAccountList.get(position).getPassWord());
         } else {
             holder.setPassWordTextView("*********");
         }
-        String memoInfo = mGodList.get(position).getMemoInfo();
+        String memoInfo = mAccountList.get(position).getMemoInfo();
         if (!memoInfo.equals("")) {
             holder.setMemoInfoContentVisibility(true);
-            holder.setMemoInfo(mGodList.get(position).getMemoInfo());
+            holder.setMemoInfo(mAccountList.get(position).getMemoInfo());
         } else {
             holder.setMemoInfoContentVisibility(false);
         }
-        int godType = mGodList.get(position).getGodType();
-        switch (godType) {
-            case 0:
-                holder.setMoRen(mContext);
-                break;
-            case 1:
-                holder.setYouXiang(mContext);
-                break;
-            case 2:
-                holder.setCard(mContext);
-                break;
-        }
         final int mPosition = position;
-        holder.setTimeText(TimeUtils.getConciseTime((mGodList.get(position).getTime()), mContext));
         holder.setOnRippleClickListener(new PWViewHolder.OnRippleClick() {
             @Override
             public void onRippleClick(View view) {
@@ -81,25 +89,39 @@ public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> {
                 }
             }
         });
+
+        //拖动item时候要用的
+        holder.getTouchView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //如果按下
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    //回调RecyclerListFragment中的startDrag方法
+                    //让mItemTouchHelper执行拖拽操作
+                    mLoginTypeFView.startDrag(holder);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         isOpen = (boolean) SPUtils.get(mContext, Constants.SETTING.OPEN_PASS_WORD_SHOW, true);
-        return mGodList == null ? 0 : mGodList.size();
+        return mAccountList == null ? 0 : mAccountList.size();
     }
 
-    public void addOneTop(God god) {
-        mGodList.add(0, god);
+    public void addOneTop(Account account) {
+        mAccountList.add(0, account);
     }
 
-    public void addAll(ArrayList<God> godArrayList) {
-        mGodList.clear();
-        mGodList.addAll(godArrayList);
+    public void addAll(ArrayList<Account> accountArrayList) {
+        mAccountList.clear();
+        mAccountList.addAll(accountArrayList);
     }
 
     public void clearData() {
-        mGodList.clear();
+        mAccountList.clear();
     }
 
 

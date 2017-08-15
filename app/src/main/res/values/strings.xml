@@ -11,6 +11,11 @@
     <string name="check_default">请绘制手势密码，来解锁</string>
     <string name="check_error">手势密码错误，请重试</string>
     <string name="change_theme_key">change_theme_key</string>
+    <string name="devString">.</string>
+    <string name="app_name_ad">简单的账户记录工具</string>
+    <string name="app_version">版本：3.0</string>
+    <string name="app_aboutDes">业精于勤，荒于嬉；行成于思，毁于随。</string>
+    <string name="aboutTeam">XUANM</string>
 
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>

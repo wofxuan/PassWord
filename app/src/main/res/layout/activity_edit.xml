@@ -39,6 +39,26 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="类别：" />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/type_edit_text"
+                    style="@style/EditTextTheme"
+                    android:hint="类别"
+                    android:lineSpacingExtra="4dp"
+                    app:met_primaryColor="?attr/colorPrimary" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/edit_padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="标题：" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText

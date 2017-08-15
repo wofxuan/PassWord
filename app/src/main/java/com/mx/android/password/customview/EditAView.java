@@ -1,10 +1,6 @@
 package com.mx.android.password.customview;
 
-import android.view.MenuItem;
-
-import com.mx.android.password.entity.God;
-
-import java.util.List;
+import com.mx.android.password.entity.Account;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
@@ -14,11 +10,13 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 public interface EditAView {
     void initCreateModel();
     void initEditModel();
-    void initViewModel(God god, int positionType);
+    void initViewModel(Account account);
+    String getGuidPW();
     String getTitleName();
     String getUserName();
     String getPassWord();
     String getMemoInfo();
+    String getAccountType();
     byte[] getImg();
     void setTime(String time);
     void showSnackToast(String msg);

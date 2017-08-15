@@ -9,4 +9,7 @@
     <!--spinner -->
     <dimen name="three_grid_unit">24dp</dimen>
     <dimen name="one_and_a_half_grid_unit">12dp</dimen>
+
+    <dimen name="sizeNormal">16dp</dimen>
+    <dimen name="sizeSmall">8dp</dimen>
 </resources>

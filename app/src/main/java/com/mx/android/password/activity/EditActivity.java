@@ -28,9 +28,10 @@ import android.widget.TextView;
 import com.mx.android.password.R;
 import com.mx.android.password.activity.base.BaseSwipeBackActivity;
 import com.mx.android.password.customview.EditAView;
+import com.mx.android.password.entity.Account;
 import com.mx.android.password.entity.EventCenter;
-import com.mx.android.password.entity.God;
 import com.mx.android.password.presenter.EditAImpl;
+import com.mx.android.password.utils.MyApplication;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.ByteArrayOutputStream;
@@ -45,7 +46,9 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
 
     private static final int SUCCESS = 1;
     private static final int ERROR = 0;
-    //    @Bind(R.id.title_edit_text)
+
+    MaterialEditText mTypeEdt;
+    //     @Bind(R.id.title_edit_text)
     MaterialEditText mTitleEdt;
     //    @Bind(R.id.userName)
     MaterialEditText mUserNameEdt;
@@ -61,6 +64,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
     private EditAImpl mEditImpl;
     private Menu mMenu;
     private AlertDialog alertDialog;
+    private String mGuidPW;
 
     /**
      * 旋转图片
@@ -113,6 +117,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mTypeEdt = (MaterialEditText) findViewById(R.id.type_edit_text);
         mPassWordEdt = (MaterialEditText) findViewById(R.id.passWord);
         mTitleEdt = (MaterialEditText) findViewById(R.id.title_edit_text);
         mUserNameEdt = (MaterialEditText) findViewById(R.id.userName);
@@ -175,7 +180,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         // 照片全路径
         String fileName = "";
         // 文件夹路径
-        String pathUrl = Environment.getExternalStorageDirectory() + "/mymy/";
+        String pathUrl = ((MyApplication) getApplication()).GetBackdir() + "/";
         String imageName = "imageTest.jpg";
         File file = new File(pathUrl);
         file.mkdirs();// 创建文件夹
@@ -251,12 +256,13 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
 
     @Override
     public void initCreateModel() {
-        mTitleEdt.requestFocus();
+        mTypeEdt.requestFocus();
         showKeyBoard();
         addEdtChangeListener();
     }
 
     private void addEdtChangeListener() {
+        mTypeEdt.addTextChangedListener(mEditImpl);
         mTitleEdt.addTextChangedListener(mEditImpl);
         mUserNameEdt.addTextChangedListener(mEditImpl);
         mPassWordEdt.addTextChangedListener(mEditImpl);
@@ -269,25 +275,36 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
     }
 
     @Override
-    public void initViewModel(God god, int positionType) {
+    public void initViewModel(Account account) {
         mView.setFocusable(true);
         mView.setFocusableInTouchMode(true);
         hideKeyBoard();
-        mTitleEdt.setText(god.getTitle());
-        mTitleEdt.setEnabled(false);
-        mUserNameEdt.setText(god.getUserName());
-        mPassWordEdt.setText(god.getPassWord());
-        mMemoInfo.setText(god.getMemoInfo());
+        mTypeEdt.setText(account.getAccountType());
+        mTypeEdt.setEnabled(false);
+        mTitleEdt.setText(account.getTitle());
+        mUserNameEdt.setText(account.getUserName());
+        mPassWordEdt.setText(account.getPassWord());
+        mMemoInfo.setText(account.getMemoInfo());
+        mGuidPW = account.getGuidPW();
+
         mUserNameEdt.setOnFocusChangeListener(mEditImpl);
         mPassWordEdt.setOnFocusChangeListener(mEditImpl);
         mMemoInfo.setOnFocusChangeListener(mEditImpl);
         addEdtChangeListener();
-        if (god.getImg() != null) {
-            if (god.getImg().length != 0) {
-                mImg.setImageBitmap(BitmapFactory.decodeByteArray(god.getImg(), 0, god.getImg().length));
+        if (account.getImg() != null) {
+            if (account.getImg().length != 0) {
+                mImg.setImageBitmap(BitmapFactory.decodeByteArray(account.getImg(), 0, account.getImg().length));
                 mNoimg.setVisibility(View.GONE);
             }
         }
+    }
+
+    @Override
+    public String getGuidPW(){return mGuidPW;}
+
+    @Override
+    public String getAccountType() {
+        return mTypeEdt.getText().toString().trim();
     }
 
     @Override
@@ -318,7 +335,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
             image.compress(Bitmap.CompressFormat.PNG, 100, baos);
             return baos.toByteArray();
         } else {
-            return null;
+            return new byte[0];
         }
     }
 
@@ -486,7 +503,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         // 照片全路径
         String fileName = "";
         // 文件夹路径
-        String pathUrl = Environment.getExternalStorageDirectory().getPath() + "/mymy/";
+        String pathUrl = ((MyApplication) getApplication()).GetBackdir() + "/";
         String imageName = "imageScale.jpg";
         FileOutputStream fos = null;
         File file = new File(pathUrl);

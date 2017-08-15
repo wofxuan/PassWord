@@ -3,30 +3,30 @@
     <com.jenzz.materialpreference.PreferenceCategory android:title="通用设置">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="开启手势密码"
-            android:title="开启手势密码"
-            android:summary="打开手势密码，将会在启动应用的时候输入设定好的手势密码"/>
+            android:summary="打开手势密码，将会在启动应用的时候输入设定好的手势密码"
+            android:title="开启手势密码" />
         <com.jenzz.materialpreference.SwitchPreference
             android:key="首页密码可见"
-            android:title="列表密码可见"
-            android:summary="打开状态下，首页密码可见～"/>
+            android:summary="打开状态下，首页密码可见～"
+            android:title="列表密码可见" />
         <com.jenzz.materialpreference.Preference
             android:key="修改手势密码"
-            android:title="修改手势密码"/>
-        <com.jenzz.materialpreference.Preference
-            android:key="更换主题"
-            android:title="更换主题"/>
+            android:title="修改手势密码" />
+        <!--        <com.jenzz.materialpreference.Preference
+                    android:key="更换主题"
+                    android:title="更换主题"/>-->
     </com.jenzz.materialpreference.PreferenceCategory>
 
     <com.jenzz.materialpreference.PreferenceCategory android:title="其他">
         <com.jenzz.materialpreference.Preference
             android:key="意见反馈"
-            android:title="意见反馈"
-            android:summary="如果你有问题或建议，欢迎您反馈给我！"/>
+            android:summary="如果你有问题或建议，欢迎您反馈给我！"
+            android:title="意见反馈" />
         <com.jenzz.materialpreference.Preference
-        android:key="给应用点赞"
-        android:title="给应用评分"/>
+            android:key="给应用点赞"
+            android:title="给应用评分" />
         <com.jenzz.materialpreference.Preference
-            android:key="检测更新"
-            android:title="检测更新"/>
+            android:key="关于"
+            android:title="关于" />
     </com.jenzz.materialpreference.PreferenceCategory>
 </PreferenceScreen>

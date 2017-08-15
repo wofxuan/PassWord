@@ -35,7 +35,6 @@ public abstract class BaseActivity extends Base {
      */
     @TargetApi(19)
     protected void initWindow() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -64,25 +63,23 @@ public abstract class BaseActivity extends Base {
 
     protected abstract boolean isApplyEventBus();
 
+    protected abstract int getContentView();
+
     private void initTheme() {
         ThemeUtils.Theme currentTheme = ThemeUtils.getCurrentTheme(this);
         ThemeUtils.changeTheme(this, currentTheme);
     }
 
     protected void initToolBar(Toolbar toolbar) {
-
         if (toolbar == null) return;
-
         toolbar.setBackgroundColor(getColorPrimary());
-        toolbar.setTitle(getString(com.mx.android.password.R.string.app_name));
+        toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
-
-    protected abstract int getContentView();
 
     protected abstract void onEventComing(EventCenter eventCenter);
 

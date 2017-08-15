@@ -4,11 +4,14 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
+import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.mx.android.password.R;
+import com.mx.android.password.activity.AboutActivity;
 import com.mx.android.password.activity.CreateLockActivity;
 import com.mx.android.password.customview.SettingAView;
 import com.mx.android.password.entity.Constants;
@@ -75,37 +78,12 @@ public class SettingFImpl implements FragmentPresenter{
         } else if (TextUtils.equals(key, "更换主题")) {
             settingAView.showChangeThemeDialog();
         } else if (TextUtils.equals(key, "意见反馈")) {
-//            FeedbackAgent mFeedbackAgent = new FeedbackAgent(mContext);
-//            mFeedbackAgent.sync();
-//            mFeedbackAgent.closeFeedbackPush();
-//            mFeedbackAgent.closeAudioFeedback();
-//            mFeedbackAgent.setWelcomeInfo("感谢反馈意见,我会尽快回复~~");
-//            Bundle bundle = new Bundle();
-//            bundle.putString(FeedbackFragment.BUNDLE_KEY_CONVERSATION_ID, mFeedbackAgent.getDefaultConversation().getId());
-//            settingAView.go2(FeedBackActivity.class, bundle);
+            FeedbackAPI.openFeedbackActivity();
         } else if (TextUtils.equals(key, "给应用点赞~")) {
             giveFavor();
-        } else if (TextUtils.equals(key, "检测更新")) {
-//            UmengUpdateAgent.forceUpdate(mContext);
-//            UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
-//                @Override
-//                public void onUpdateReturned(int updateStatus, UpdateResponse updateResponse) {
-//                    switch (updateStatus) {
-//                        case UpdateStatus.Yes: // has update
-//                            UmengUpdateAgent.showUpdateDialog(mContext, updateResponse);
-//                            break;
-//                        case UpdateStatus.No: // has no update
-//                            settingAView.showSnackBar("当前为最新版本~~");
-//                            break;
-//                        case UpdateStatus.NoneWifi: // none wifi
-//                            settingAView.showSnackBar("没有wifi连接， 只在wifi下更新");
-//                            break;
-//                        case UpdateStatus.Timeout: // time out
-//                            settingAView.showSnackBar("连接超时");
-//                            break;
-//                    }
-//                }
-//            });
+        } else if (TextUtils.equals(key, "关于")) {
+            Bundle bundle = new Bundle();
+            settingAView.go2(AboutActivity.class, bundle);
         }
     }
 

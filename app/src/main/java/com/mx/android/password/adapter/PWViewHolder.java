@@ -1,6 +1,6 @@
 package com.mx.android.password.adapter;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,24 +12,23 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.jakewharton.rxbinding.view.RxView;
 import com.mx.android.password.R;
+import com.mx.android.password.customview.onStateChangedListener;
 
 import java.util.concurrent.TimeUnit;
-
-import rx.functions.Action1;
 
 /**
  * Created by mxuan on 2016-07-11.
  */
-public class PWViewHolder extends RecyclerView.ViewHolder {
+public class PWViewHolder extends RecyclerView.ViewHolder implements onStateChangedListener {
 
     private final TextView mTitleTextView;
     private final TextView mNoteContentTextView;
-    private final TextView mTimeTextView;
     private final TextView mMemoInfo;
     private final MaterialRippleLayout ripple;
     private final TextView mPassWordTextView;
     private final FrameLayout mMemoInfoContent;
     private final ImageView mImageType;
+    private final ImageView mMoveimg;
     private OnRippleClick onRippleClick;
 
     public PWViewHolder(View parent) {
@@ -37,11 +36,11 @@ public class PWViewHolder extends RecyclerView.ViewHolder {
         ripple = (MaterialRippleLayout) parent.findViewById(R.id.ripple);
         mTitleTextView = (TextView) parent.findViewById(R.id.main_item_title);
         mNoteContentTextView = (TextView) parent.findViewById(R.id.main_item_name);
-        mTimeTextView = (TextView) parent.findViewById(R.id.main_item_date);
         mPassWordTextView = (TextView) parent.findViewById(R.id.main_item_password);
         mMemoInfo = (TextView) parent.findViewById(R.id.memoInfo);
         mMemoInfoContent = (FrameLayout) parent.findViewById(R.id.main_item_note_container);
         mImageType = (ImageView) parent.findViewById(R.id.imageType);
+        mMoveimg = (ImageView) parent.findViewById(R.id.moveimg);
         RxView.clicks(ripple).throttleFirst(1000, TimeUnit.MILLISECONDS).subscribe(
                 aVoid -> onRippleClick.onRippleClick(ripple)
         );
@@ -55,16 +54,20 @@ public class PWViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setMoRen(Context context) {
-//        mImageType.setBackgroundDrawable(context.getResources().getDrawable(R.mipmap.index_moren));
+    public View getTouchView() {
+        return mMoveimg;
     }
 
-    public void setYouXiang(Context context) {
-//        mImageType.setBackgroundDrawable(context.getResources().getDrawable(R.mipmap.index_youxiang));
+    @Override
+    public void onItemSelected() {
+        //设置item的背景颜色为浅灰色
+        getTouchView().setBackgroundColor(Color.LTGRAY);
     }
 
-    public void setCard(Context context) {
-//        mImageType.setBackgroundDrawable(context.getResources().getDrawable(R.mipmap.ic_item_password));
+    @Override
+    public void onItemClear() {
+        //恢复item的背景颜色
+        getTouchView().setBackgroundColor(0);
     }
 
     public void setLabelText(CharSequence text) {
@@ -81,14 +84,6 @@ public class PWViewHolder extends RecyclerView.ViewHolder {
 
     public void setContentText(int text) {
         setTextView(mNoteContentTextView, text);
-    }
-
-    public void setTimeText(CharSequence text) {
-        setTextView(mTimeTextView, text);
-    }
-
-    public void setTimeText(int text) {
-        setTextView(mTimeTextView, text);
     }
 
     public void setMemoInfo(CharSequence text) {
