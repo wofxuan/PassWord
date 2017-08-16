@@ -273,3 +273,6 @@
 -dontwarn org.codehaus.**
 -dontwarn java.nio.**
 -dontwarn java.lang.invoke.**
+
+# sqlcipher
+-dontwarn net.sqlcipher.database.**
