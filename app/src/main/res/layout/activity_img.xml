@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.mx.android.password.activity.ImgActivity">
 
-    <ImageView
+    <com.mx.android.password.utils.ZoomImageView
         android:id="@+id/bigImg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

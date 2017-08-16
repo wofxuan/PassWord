@@ -2,11 +2,10 @@ package com.mx.android.password.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public abstract class DataBaseHelper {
 
     public DataBaseHelper(Context context) {
         //不可忽略的 进行so库加载
-        SQLiteDatabase.loadLibs(context);
+//        SQLiteDatabase.loadLibs(context);
         this.mDbVersion = this.getMDbVersion(context);
         this.mDbName = this.getDbName(context);
         this.mDbPWD = this.getDbPWD(context);
@@ -70,7 +69,8 @@ public abstract class DataBaseHelper {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mDb = mDbHelper.getWritableDatabase(mDbPWD);
+//                mDb = mDbHelper.getWritableDatabase(mDbPWD);
+                mDb = mDbHelper.getWritableDatabase();
             }
         }).start();
 

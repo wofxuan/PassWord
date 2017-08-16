@@ -249,7 +249,6 @@ public class LockPatternView extends View {
 		}
 
 		setClickable(true);
-
 		mPathPaint.setAntiAlias(true);
 		mPathPaint.setDither(true);
 		mPathPaint.setColor(LINE_COLOR_RIGHT); // TODO this should be from the

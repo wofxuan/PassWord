@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -138,7 +139,7 @@ public class EditAImpl implements ActivityPresenter,
         String memoInfo = mEditAView.getMemoInfo();
         String accountType = mEditAView.getAccountType();
         byte[] img = mEditAView.getImg();
-
+        Log.d("img", String.valueOf(img.length));
         Account account = new Account(accountType, titleName, userName, passWord, TimeUtils.getCurrentTimeInString(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")), memoInfo);
         account.setImg(img);
         switch (createMode) {

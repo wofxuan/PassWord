@@ -3,11 +3,11 @@ package com.mx.android.password.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.support.v7.app.AppCompatActivity;
 
 import com.mx.android.password.R;
+import com.mx.android.password.utils.ZoomImageView;
 
 public class ImgActivity extends AppCompatActivity {
 
@@ -15,10 +15,16 @@ public class ImgActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img);
-        ImageView imageview = (ImageView)findViewById(R.id.bigImg);
+        ZoomImageView zoomImg = (ZoomImageView)findViewById(R.id.bigImg);
         Intent intent = getIntent();
-        byte[] bitmap = intent.getByteArrayExtra("bitmap");
+        String imgPath = intent.getStringExtra("bitmappath");
 
-        imageview.setImageBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length));
+        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
+        zoomImg.setImage(bitmap);
+//        bitmap.recycle();//不能释放
+
+//        zoomImg.setImageURI(Uri.fromFile(new File(imgPath)));
+//        byte[] bitmap = intent.getByteArrayExtra("bitmap");
+//        imageview.setImageBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length));
     }
 }

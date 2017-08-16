@@ -31,6 +31,7 @@ import com.mx.android.password.customview.EditAView;
 import com.mx.android.password.entity.Account;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.presenter.EditAImpl;
+import com.mx.android.password.utils.BitmapUtils;
 import com.mx.android.password.utils.MyApplication;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -136,9 +137,25 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
                     case 0: {
                         Intent intent = new Intent(this, ImgActivity.class);
                         Bitmap bitmap = ((BitmapDrawable) mImg.getDrawable()).getBitmap();
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                        intent.putExtra("bitmap", baos.toByteArray());
+
+                        File f = new File(getPhotopath());
+                        if (f.exists()) {
+                            f.delete();
+                        }
+                        try {
+                            FileOutputStream out = new FileOutputStream(f);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+//                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+//                            intent.putExtra("bitmap", baos.toByteArray());
+                            intent.putExtra("bitmappath", getPhotopath());
+                            bitmap.recycle();
+                            out.flush();
+                            out.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                         startActivity(intent);
                         break;
                     }
@@ -300,7 +317,9 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
     }
 
     @Override
-    public String getGuidPW(){return mGuidPW;}
+    public String getGuidPW() {
+        return mGuidPW;
+    }
 
     @Override
     public String getAccountType() {
@@ -330,9 +349,13 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
     @Override
     public byte[] getImg() {
         if (mNoimg.getVisibility() == View.GONE) {
-            Bitmap image = ((BitmapDrawable) mImg.getDrawable()).getBitmap();
+//            Bitmap image = ((BitmapDrawable) mImg.getDrawable()).getBitmap();
+
+            Bitmap image = BitmapUtils.decodeSampledBitmapFromResource(getResources(), getPhotopath(), mImg.getWidth(), mImg.getHeight());
+            delCacheImge();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            image.recycle();
             return baos.toByteArray();
         } else {
             return new byte[0];
@@ -437,16 +460,19 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
             bitmap = rotaingImageView(degree, bitmap);
             //saveScalePhoto(bitmap);
 //            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            File delFile = new File(getPhotopath());
-            delFile.delete();
-
-            Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            scanIntent.setData(Uri.fromFile(new File(getPhotopath())));
-            this.sendBroadcast(scanIntent);
-
+//            delCacheImge();
             mImg.setImageBitmap(bitmap);// 将图片显示在ImageView里
             mNoimg.setVisibility(View.GONE);
         }
+    }
+
+    private void delCacheImge() {
+        File delFile = new File(getPhotopath());
+        delFile.delete();
+
+        Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        scanIntent.setData(Uri.fromFile(new File(getPhotopath())));
+        this.sendBroadcast(scanIntent);
     }
 
     /**

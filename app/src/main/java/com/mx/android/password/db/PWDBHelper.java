@@ -89,13 +89,15 @@ public class PWDBHelper extends DataBaseHelper {
         if (!Utils.StringEmpty(guidPW)) {
             list = mPWDBHelper.queryListMap("select * from tb_account where guidPW=?", new String[]{guidPW});
         } else {
-            list = mPWDBHelper.queryListMap("select * from tb_account", null);
+            list = mPWDBHelper.queryListMap("select guidPW,accountType,title,userName,passWord,time,memoInfo,rowIndex from tb_account", null);
         }
         for (Map account : list) {
 
             Account at = new Account((String) account.get("accountType"), (String) account.get("title"), (String) account.get("userName"),
                     (String) account.get("passWord"), (String) account.get("time"), (String) account.get("memoInfo"));
-            at.setImg((byte[]) account.get("img"));
+
+            if (!Utils.StringEmpty(guidPW)) at.setImg((byte[]) account.get("img"));
+
             at.setGuidPW((String) account.get("guidPW"));
             at.setRowIndex((Integer) account.get("rowIndex"));
 
