@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by Administrator on 2017-08-14.
  */
@@ -34,6 +32,7 @@ public class PWDBHelper extends DataBaseHelper {
             "memoInfo text, " +
             "img BLOB)";
     private static final String PWDbName = "pw.db";
+    private static final String DBPWD = "wllxuan2017";//数据库密码
     private static final int DBVERSION = 1;
     private static PWDBHelper mPWDBHelper;
 
@@ -96,7 +95,7 @@ public class PWDBHelper extends DataBaseHelper {
 
             Account at = new Account((String) account.get("accountType"), (String) account.get("title"), (String) account.get("userName"),
                     (String) account.get("passWord"), (String) account.get("time"), (String) account.get("memoInfo"));
-            at.setImg((byte[])account.get("img"));
+            at.setImg((byte[]) account.get("img"));
             at.setGuidPW((String) account.get("guidPW"));
             at.setRowIndex((Integer) account.get("rowIndex"));
 
@@ -193,7 +192,6 @@ public class PWDBHelper extends DataBaseHelper {
     public static String copyBundledRealmFile(Context context, String oldFilePath, String outFileName) {
         try {
             File file = new File(outFileName);
-            Log.d(TAG, "context.getFilesDir() = " + context.getFilesDir().toString());
             FileOutputStream outputStream = new FileOutputStream(file);
             FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
 
@@ -220,6 +218,10 @@ public class PWDBHelper extends DataBaseHelper {
         return PWDbName;
     }
 
+    @Override
+    protected String getDbPWD(Context context) {
+        return DBPWD;
+    }
 
     @Override
     protected String[] getDbCreateSql(Context context) {

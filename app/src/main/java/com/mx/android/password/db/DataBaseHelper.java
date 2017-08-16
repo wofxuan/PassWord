@@ -2,10 +2,11 @@ package com.mx.android.password.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public abstract class DataBaseHelper {
      */
     private int mDbVersion;//版本
     private String mDbName;//数据库名
+    private String mDbPWD;//数据库密码
     /**
      * 创建表语句
      */
@@ -44,8 +46,11 @@ public abstract class DataBaseHelper {
     private String[] mDbUpdateSql;
 
     public DataBaseHelper(Context context) {
+        //不可忽略的 进行so库加载
+        SQLiteDatabase.loadLibs(context);
         this.mDbVersion = this.getMDbVersion(context);
         this.mDbName = this.getDbName(context);
+        this.mDbPWD = this.getDbPWD(context);
         this.mDbCreateSql = this.getDbCreateSql(context);
         this.mDbUpdateSql = this.getDbUpdateSql(context);
         this.mDbHelper = new DBHelper(context, this.mDbName, null, this.mDbVersion);
@@ -55,6 +60,8 @@ public abstract class DataBaseHelper {
 
     protected abstract String getDbName(Context context);
 
+    protected abstract String getDbPWD(Context context);
+
     protected abstract String[] getDbCreateSql(Context context);
 
     protected abstract String[] getDbUpdateSql(Context context);
@@ -63,7 +70,7 @@ public abstract class DataBaseHelper {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mDb = mDbHelper.getWritableDatabase();
+                mDb = mDbHelper.getWritableDatabase(mDbPWD);
             }
         }).start();
 
@@ -90,8 +97,8 @@ public abstract class DataBaseHelper {
         if (value == null) {
             contentValues.put(key, "");
         } else {
-            if(value instanceof byte[]){
-                contentValues.put(key, (byte[])value);
+            if (value instanceof byte[]) {
+                contentValues.put(key, (byte[]) value);
                 return;
             }
             String className = value.getClass().getName();
