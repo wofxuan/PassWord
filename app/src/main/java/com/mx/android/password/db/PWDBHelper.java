@@ -32,7 +32,7 @@ public class PWDBHelper extends DataBaseHelper {
             "memoInfo text, " +
             "img BLOB)";
     private static final String PWDbName = "pw.db";
-    private static final String DBPWD = "wllxuan2017";//数据库密码
+    private static final String DBPWD = "wllxuAn2017";//数据库密码
     private static final int DBVERSION = 1;
     private static PWDBHelper mPWDBHelper;
 
