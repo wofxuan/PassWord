@@ -1,12 +1,18 @@
 package com.mx.android.password.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.NavigationView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
@@ -74,19 +80,32 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
         }
     }
 
+    public void waitclick() {
+        final PopupWindow popupWindow = new PopupWindow();
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setFocusable(true);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.wait_popup, null);
+        popupWindow.setContentView(view);
+        popupWindow.showAtLocation(((Activity) mContext).getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mContext, "还原成功", Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+                EventCenter eventCenter = new EventCenter(Constants.EVEN_BUS.INDEX_EVENT_SUCCESS, true);
+                EventBus.getDefault().post(eventCenter);
+            }
+        }, 2000);
+    }
+
     public void backup(String dirPath) {
         PWDBHelper.backup(mContext, dirPath);
     }
 
     public void restore(String filePath) {
         PWDBHelper.restore(mContext, filePath);
-        try {
-            Thread.currentThread().sleep(100);//阻断 还原后马上查询数据库可能出错
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        EventCenter eventCenter = new EventCenter(Constants.EVEN_BUS.INDEX_EVENT_SUCCESS, true);
-        EventBus.getDefault().post(eventCenter);
+        waitclick();
     }
 
     public void getFeedbackUnreadCount() {
