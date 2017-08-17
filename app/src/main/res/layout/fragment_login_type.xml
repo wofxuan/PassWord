@@ -25,8 +25,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:drawablePadding="10dp"
-            android:drawableTop="@mipmap/ic_exception"
             android:textColor="@color/text_color"
-            android:text="主人，您还没添加任何密码备忘记录哦～～"/>
+            android:text="没有数据"/>
     </LinearLayout>
 </FrameLayout>
