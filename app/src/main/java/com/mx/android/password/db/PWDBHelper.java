@@ -87,9 +87,9 @@ public class PWDBHelper extends DataBaseHelper {
         ArrayList<Account> accountList = new ArrayList<>();
         List<Map> list;
         if (!Utils.StringEmpty(guidPW)) {
-            list = mPWDBHelper.queryListMap("select * from tb_account where guidPW=?", new String[]{guidPW});
+            list = mPWDBHelper.queryListMap("select * from tb_account where guidPW=? order by rowIndex", new String[]{guidPW});
         } else {
-            list = mPWDBHelper.queryListMap("select guidPW,accountType,title,userName,passWord,time,memoInfo,rowIndex from tb_account", null);
+            list = mPWDBHelper.queryListMap("select guidPW,accountType,title,userName,passWord,time,memoInfo,rowIndex from tb_account order by rowIndex", null);
         }
         for (Map account : list) {
 
@@ -122,9 +122,9 @@ public class PWDBHelper extends DataBaseHelper {
         ArrayList<Account> accountList = new ArrayList<>();
         List<Map> list;
         if (!Utils.StringEmpty(accountType)) {
-            list = mPWDBHelper.queryListMap("select * from tb_account where accountType=?", new String[]{accountType});
+            list = mPWDBHelper.queryListMap("select * from tb_account where accountType=? order by rowIndex", new String[]{accountType});
         } else {
-            list = mPWDBHelper.queryListMap("select * from tb_account", null);
+            list = mPWDBHelper.queryListMap("select guidPW,accountType,title,userName,passWord,time,memoInfo,rowIndex  from tb_account order by rowIndex", null);
         }
         for (Map account : list) {
 
@@ -140,15 +140,26 @@ public class PWDBHelper extends DataBaseHelper {
 
     //交换行号
     public static void onSwapAccount(Context context, Account account1, Account account2) {
-        int rowIndex = account1.getRowIndex();
+        mPWDBHelper.beginTransaction();  //手动设置开始事务
+        try{
+            int rowIndex1 = account1.getRowIndex();
+            int rowIndex2 = account2.getRowIndex();
 
-        mPWDBHelper.update("tb_account",
-                new String[]{"rowIndex"}, new Object[]{account2.getRowIndex()},
-                new String[]{"guidPW"}, new String[]{account1.getGuidPW()});
+            mPWDBHelper.update("tb_account",
+                    new String[]{"rowIndex"}, new Object[]{rowIndex1},
+                    new String[]{"guidPW"}, new String[]{account1.getGuidPW()});
 
-        mPWDBHelper.update("tb_account",
-                new String[]{"rowIndex"}, new Object[]{rowIndex},
-                new String[]{"guidPW"}, new String[]{account2.getGuidPW()});
+            mPWDBHelper.update("tb_account",
+                    new String[]{"rowIndex"}, new Object[]{rowIndex2},
+                    new String[]{"guidPW"}, new String[]{account2.getGuidPW()});
+            Log.d("onSwapAccount", "onSwapAccount");
+
+            mPWDBHelper.setTransactionSuccessful(); //设置事务处理成功，不设置会自动回滚不提交
+        }catch(Exception e){
+            Log.d("onSwapAccount", e.getMessage());
+        }finally{
+            mPWDBHelper.endTransaction(); //处理完成
+        }
     }
 
     public static void delete(Context context, Account account) {

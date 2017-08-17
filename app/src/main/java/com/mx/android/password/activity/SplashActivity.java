@@ -19,7 +19,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

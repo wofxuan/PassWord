@@ -275,4 +275,5 @@
 -dontwarn java.lang.invoke.**
 
 # sqlcipher
--dontwarn net.sqlcipher.database.**
+-keep  class net.sqlcipher.** {*;}
+-keep  class net.sqlcipher.database.** {*;}

@@ -55,8 +55,17 @@ public class PassWordFImpl implements FragmentPresenter, PWViewAdapter.OnRecycle
         return PWDBHelper.filterAccount(mContext, accountType);
     }
 
-    public void onSwapAccount(int old, int target) {
-        PWDBHelper.onSwapAccount(mContext, selector.get(old), selector.get(target));
+    public void onSwapAccount(Account account1, Account account2) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PWDBHelper.onSwapAccount(mContext, account1, account2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override

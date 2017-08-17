@@ -10,21 +10,28 @@ import com.mx.android.password.R;
 import com.mx.android.password.utils.ZoomImageView;
 
 public class ImgActivity extends AppCompatActivity {
+    private Bitmap mBitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img);
-        ZoomImageView zoomImg = (ZoomImageView)findViewById(R.id.bigImg);
+        ZoomImageView zoomImg = (ZoomImageView) findViewById(R.id.bigImg);
         Intent intent = getIntent();
         String imgPath = intent.getStringExtra("bitmappath");
 
-        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
-        zoomImg.setImage(bitmap);
+        mBitmap = BitmapFactory.decodeFile(imgPath);
+        zoomImg.setImage(mBitmap);
 //        bitmap.recycle();//不能释放
 
 //        zoomImg.setImageURI(Uri.fromFile(new File(imgPath)));
 //        byte[] bitmap = intent.getByteArrayExtra("bitmap");
 //        imageview.setImageBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBitmap.recycle();
     }
 }

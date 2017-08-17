@@ -42,6 +42,11 @@ public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> implements
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        int tmp1 =  mAccountList.get(fromPosition).getRowIndex();
+        int tmp2 =  mAccountList.get(toPosition).getRowIndex();
+        mAccountList.get(fromPosition).setRowIndex(tmp2);
+        mAccountList.get(toPosition).setRowIndex(tmp1);
+
         //交换mItems数据的位置
         Collections.swap(mAccountList, fromPosition, toPosition);
         //交换RecyclerView列表中item的位置
@@ -124,6 +129,9 @@ public class PWViewAdapter extends RecyclerView.Adapter<PWViewHolder> implements
         mAccountList.clear();
     }
 
+    public Account getItem(int index) {
+        return mAccountList.get(index);
+    }
 
     public void setOnRecyclerItemClick(OnRecyclerItemClickListener onItemClickListener) {
         listener = onItemClickListener;

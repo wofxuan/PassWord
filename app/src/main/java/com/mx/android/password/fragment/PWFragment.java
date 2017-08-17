@@ -13,6 +13,7 @@ import com.mx.android.password.R;
 import com.mx.android.password.adapter.PWViewAdapter;
 import com.mx.android.password.customview.onMoveAndSwipedListener;
 import com.mx.android.password.customview.onStateChangedListener;
+import com.mx.android.password.entity.Account;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.entity.LoginTypeFView;
 import com.mx.android.password.presenter.PassWordFImpl;
@@ -182,9 +183,12 @@ public class PWFragment extends BaseFragment implements LoginTypeFView {
             if (viewHolder.getItemViewType() != target.getItemViewType()) {
                 return false;
             }
+
+            Account account1 = ((PWViewAdapter)mAdapter).getItem(viewHolder.getAdapterPosition());
+            Account account2 = ((PWViewAdapter)mAdapter).getItem(target.getAdapterPosition());
             //回调adapter中的onItemMove方法
             mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-            mIndexFImpl.onSwapAccount(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            mIndexFImpl.onSwapAccount(account1, account2);
             return true;
         }
 
