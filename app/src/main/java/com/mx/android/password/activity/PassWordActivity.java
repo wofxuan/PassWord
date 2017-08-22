@@ -262,6 +262,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
                 String accountType = data.getStringExtra("accountType");
                 if (Utils.StringEmpty(accountType)) return;
                 if(accountType.equals(FILTERALL)) accountType = "";
+//                CrashReport.testJavaCrash();
                 EventCenter eventCenter = new EventCenter(FILTER_EVENT_SUCCESS, accountType);
                 EventBus.getDefault().post(eventCenter);
                 setFilterTitle(accountType);

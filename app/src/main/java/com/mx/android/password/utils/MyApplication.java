@@ -6,6 +6,7 @@ import android.os.Environment;
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.facebook.stetho.Stetho;
 import com.mx.android.password.db.PWDBHelper;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
 
@@ -19,6 +20,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        CrashReport.initCrashReport(getApplicationContext(), "94a09746d5", false);
 
         FeedbackAPI.init(this, "24581823", "e3b0281dc333c369b22caa173e23a6c5");
 //        FeedbackAPI.setDefaultUserContactInfo("13800000001");
