@@ -10,4 +10,5 @@ import android.support.v7.widget.RecyclerView;
 public interface FilterAView {
     void finishActivity();
     void initRecycler(LinearLayoutManager linearLayoutManager, RecyclerView.Adapter adapter);
+    boolean isShowAll();
 }

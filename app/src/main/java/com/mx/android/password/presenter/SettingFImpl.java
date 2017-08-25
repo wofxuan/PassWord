@@ -1,9 +1,7 @@
 package com.mx.android.password.presenter;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
@@ -37,6 +35,7 @@ public class SettingFImpl implements FragmentPresenter{
     private final SettingAView settingAView;
     private Boolean isOpen;
     private boolean isOpenShow;
+    private boolean isAutoBackup;
 
     public SettingFImpl(Context context, SettingAView view) {
         mContext = context;
@@ -48,8 +47,10 @@ public class SettingFImpl implements FragmentPresenter{
         settingAView.findView();
         isOpen = (Boolean) SPUtils.get(mContext, Constants.SETTING.OPEN_GESTURE, true);
         isOpenShow = (Boolean) SPUtils.get(mContext, Constants.SETTING.OPEN_PASS_WORD_SHOW, true);
+        isAutoBackup = (Boolean) SPUtils.get(mContext, Constants.SETTING.AUTO_BACKUP, true);
         settingAView.initState(isOpen);
         settingAView.initOpenShow(isOpenShow);
+        settingAView.initAutoBackup(isAutoBackup);
     }
 
     @Override
@@ -75,12 +76,13 @@ public class SettingFImpl implements FragmentPresenter{
             Intent intent = new Intent(mContext, CreateLockActivity.class);
             intent.putExtra("CREATE_MODE", Constants.UPDATE_GESTURE);
             settingAView.readyGo(CreateLockActivity.class,intent);
+        } else if (TextUtils.equals(key, "自动备份")) {
+            isAutoBackup = !isAutoBackup;
+            SPUtils.put(mContext, Constants.SETTING.AUTO_BACKUP, isAutoBackup);
         } else if (TextUtils.equals(key, "更换主题")) {
             settingAView.showChangeThemeDialog();
         } else if (TextUtils.equals(key, "意见反馈")) {
             FeedbackAPI.openFeedbackActivity();
-        } else if (TextUtils.equals(key, "给应用点赞~")) {
-            giveFavor();
         } else if (TextUtils.equals(key, "关于")) {
             Bundle bundle = new Bundle();
             settingAView.go2(AboutActivity.class, bundle);
@@ -91,16 +93,5 @@ public class SettingFImpl implements FragmentPresenter{
         SPUtils.put(mContext, mContext.getResources().getString(R.string.change_theme_key), position);
         EventBus.getDefault().post(new EventCenter(Constants.EVEN_BUS.CHANGE_THEME));
         settingAView.reCreate();
-    }
-
-    private void giveFavor(){
-        try{
-            Uri uri = Uri.parse("market://details?id="+ mContext.getPackageName());
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
-        }catch(ActivityNotFoundException e){
-            e.printStackTrace();
-        }
     }
 }

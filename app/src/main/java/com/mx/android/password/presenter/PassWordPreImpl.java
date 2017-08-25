@@ -22,8 +22,14 @@ import com.mx.android.password.customview.PassWordAView;
 import com.mx.android.password.db.PWDBHelper;
 import com.mx.android.password.entity.Constants;
 import com.mx.android.password.entity.EventCenter;
+import com.mx.android.password.utils.MyApplication;
+import com.mx.android.password.utils.SPUtils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by mxuan on 2016-07-10.
@@ -100,6 +106,29 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
     }
 
     public void backup(String dirPath) {
+        PWDBHelper.backup(mContext, dirPath);
+    }
+
+    public void autoBackup() {
+        boolean autobackup = (boolean) SPUtils.get(mContext, Constants.SETTING.AUTO_BACKUP, true);
+        if (!autobackup) return;
+
+        SimpleDateFormat curDateTime = new SimpleDateFormat("yyyyMMdd");
+        String filename = "backup" + curDateTime.format(new Date());
+
+        String dirPath = ((MyApplication) ((Activity) mContext).getApplication()).GetBackdir();
+        File[] myFile = new File(dirPath).listFiles();
+        if (myFile != null) {
+            for (File f : myFile) {
+                //过滤目录
+                if (f.isDirectory() && (!f.isHidden())) continue;
+                if (f.isFile() && (!f.isHidden())) {
+                    int find = f.getPath().indexOf(filename);
+                    if (find > -1) return;
+                }
+            }
+        }
+
         PWDBHelper.backup(mContext, dirPath);
     }
 

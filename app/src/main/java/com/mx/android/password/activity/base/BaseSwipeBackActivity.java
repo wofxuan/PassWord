@@ -15,8 +15,11 @@ import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.utils.ThemeUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.Utils;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase;
@@ -29,6 +32,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
  */
 public abstract class BaseSwipeBackActivity extends Base implements SwipeBackActivityBase {
     private SwipeBackActivityHelper mHelper;
+    private Unbinder binder;
 
     //    protected ViewDataBinding mDataBinding;
     @Override
@@ -39,9 +43,9 @@ public abstract class BaseSwipeBackActivity extends Base implements SwipeBackAct
         setContentView(getContentView());
         mHelper = new SwipeBackActivityHelper(this);
         mHelper.onActivityCreate();
-//        if (isApplyButterKnife()) ButterKnife.bind(this);
+        if (isApplyButterKnife()) binder = ButterKnife.bind(this);
         initToolbar();
-//        if (isApplyEventBus()) EventBus.getDefault().register(this);
+        if (isApplyEventBus()) EventBus.getDefault().register(this);
     }
 
     @Override
@@ -159,8 +163,8 @@ public abstract class BaseSwipeBackActivity extends Base implements SwipeBackAct
 
     @Override
     protected void onDestroy() {
-//        if (isApplyButterKnife()) ButterKnife.unbind(this);
-//        if (isApplyEventBus()) EventBus.getDefault().unregister(this);
+        if (isApplyButterKnife()) binder.unbind();
+        if (isApplyEventBus()) EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

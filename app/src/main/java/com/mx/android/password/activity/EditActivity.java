@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mx.android.password.R;
 import com.mx.android.password.activity.base.BaseSwipeBackActivity;
@@ -33,6 +34,7 @@ import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.presenter.EditAImpl;
 import com.mx.android.password.utils.BitmapUtils;
 import com.mx.android.password.utils.MyApplication;
+import com.mx.android.password.utils.Utils;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.ByteArrayOutputStream;
@@ -41,39 +43,41 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
 public class EditActivity extends BaseSwipeBackActivity implements EditAView {
+    private static final int QTYTYPE_REQUEST_CODE = 1;
+    private static final int NOIMG_REQUEST_CODE = 2;
 
     private static final int SUCCESS = 1;
     private static final int ERROR = 0;
 
+    @BindView(R.id.type_edit_text)
     MaterialEditText mTypeEdt;
-    //     @Bind(R.id.title_edit_text)
+    @BindView(R.id.title_edit_text)
     MaterialEditText mTitleEdt;
-    //    @Bind(R.id.userName)
+    @BindView(R.id.userName)
     MaterialEditText mUserNameEdt;
-    //    @Bind(R.id.passWord)
+    @BindView(R.id.passWord)
     MaterialEditText mPassWordEdt;
-    //    @Bind(R.id.view)
+    @BindView(R.id.view)
     LinearLayout mView;
-    //    @Bind(R.id.memo)
+    @BindView(R.id.memo)
     MaterialEditText mMemoInfo;
-
+    @BindView(R.id.qryType)
+    ImageView mQryType;
+    @BindView(R.id.img)
     ImageView mImg;
+    @BindView(R.id.noImg)
     TextView mNoimg;
     private EditAImpl mEditImpl;
     private Menu mMenu;
     private AlertDialog alertDialog;
     private String mGuidPW;
 
-    /**
-     * 旋转图片
-     *
-     * @param angle
-     * @param bitmap
-     * @return Bitmap
-     */
+    //旋转图片
     public static Bitmap rotaingImageView(int angle, Bitmap bitmap) {
         //旋转图片 动作
         Matrix matrix = new Matrix();
@@ -86,12 +90,7 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         return resizedBitmap;
     }
 
-    /**
-     * 读取图片属性：旋转的角度
-     *
-     * @param path 图片绝对路径
-     * @return degree旋转的角度
-     */
+    //读取图片属性：旋转的角度
     public static int readPictureDegree(String path) {
         int degree = 0;
         try {
@@ -114,72 +113,72 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         return degree;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @OnClick({R.id.qryType, R.id.img, R.id.noImg})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.qryType:
+                Intent intent = new Intent(this, FilterActivity.class);
+                intent.putExtra("ShowAll", false);
+                startActivityForResult(intent, QTYTYPE_REQUEST_CODE);
+                break;
+            case R.id.img:
+                android.support.v7.app.AlertDialog.Builder builder = null;
+                builder = new android.support.v7.app.AlertDialog.Builder(this);
+                builder.setTitle("选择操作");
+                builder.setItems(new String[]{"查看", "删除"}, (DialogInterface dialog, int which) -> {
+                    switch (which) {
+                        case 0: {
+                            Intent intentimg = new Intent(this, ImgActivity.class);
+                            Bitmap bitmap = ((BitmapDrawable) mImg.getDrawable()).getBitmap();
 
-        mTypeEdt = (MaterialEditText) findViewById(R.id.type_edit_text);
-        mPassWordEdt = (MaterialEditText) findViewById(R.id.passWord);
-        mTitleEdt = (MaterialEditText) findViewById(R.id.title_edit_text);
-        mUserNameEdt = (MaterialEditText) findViewById(R.id.userName);
-
-        mView = (LinearLayout) findViewById(R.id.view);
-        mMemoInfo = (MaterialEditText) findViewById(R.id.memo);
-        mImg = (ImageView) findViewById(R.id.img);
-        mNoimg = (TextView) findViewById(R.id.noImg);
-
-        mImg.setOnClickListener((View v) -> {
-            android.support.v7.app.AlertDialog.Builder builder = null;
-            builder = new android.support.v7.app.AlertDialog.Builder(this);
-            builder.setTitle("选择操作");
-            builder.setItems(new String[]{"查看", "删除"}, (DialogInterface dialog, int which) -> {
-                switch (which) {
-                    case 0: {
-                        Intent intent = new Intent(this, ImgActivity.class);
-                        Bitmap bitmap = ((BitmapDrawable) mImg.getDrawable()).getBitmap();
-
-                        File f = new File(getPhotopath());
-                        if (f.exists()) {
-                            f.delete();
-                        }
-                        try {
-                            FileOutputStream out = new FileOutputStream(f);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                            File f = new File(getPhotopath());
+                            if (f.exists()) {
+                                f.delete();
+                            }
+                            try {
+                                FileOutputStream out = new FileOutputStream(f);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 //                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 //                            intent.putExtra("bitmap", baos.toByteArray());
-                            intent.putExtra("bitmappath", getPhotopath());
-                            bitmap.recycle();
-                            out.flush();
-                            out.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                                intentimg.putExtra("bitmappath", getPhotopath());
+                                bitmap.recycle();
+                                out.flush();
+                                out.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            startActivity(intentimg);
+                            break;
                         }
-
-                        startActivity(intent);
-                        break;
+                        case 1: {
+                            mImg.setVisibility(View.GONE);
+                            mNoimg.setVisibility(View.VISIBLE);
+                            break;
+                        }
                     }
-                    case 1: {
-                        mImg.setVisibility(View.GONE);
-                        mNoimg.setVisibility(View.VISIBLE);
-                        break;
-                    }
-                }
+                });
+                builder.show();
+                break;
+            case R.id.noImg:
+                Intent intentNoImg = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intentNoImg.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+                File out = new File(getPhotopath());
+                Uri uri = Uri.fromFile(out);
+                // 获取拍照后未压缩的原图片，并保存在uri路径中
+                intentNoImg.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(intentNoImg, NOIMG_REQUEST_CODE);
+                break;
+            default:
+                Toast.makeText(this, "没有处理", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
 
-            });
-            ;
-            builder.show();
-        });
-
-        mNoimg.setOnClickListener((View v) -> {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-            File out = new File(getPhotopath());
-            Uri uri = Uri.fromFile(out);
-            // 获取拍照后未压缩的原图片，并保存在uri路径中
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            startActivityForResult(intent, 1);
-        });
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         initToolbar();
 
@@ -298,6 +297,8 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         hideKeyBoard();
         mTypeEdt.setText(account.getAccountType());
         mTypeEdt.setEnabled(false);
+        mQryType.setVisibility(View.GONE);
+
         mTitleEdt.setText(account.getTitle());
         mUserNameEdt.setText(account.getUserName());
         mPassWordEdt.setText(account.getPassWord());
@@ -424,45 +425,40 @@ public class EditActivity extends BaseSwipeBackActivity implements EditAView {
         return getSwipeBackLayout();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
+    protected void afterImg(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-
             String sdStatus = Environment.getExternalStorageState();
             if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
-                Log.v("TestFile",
-                        "SD card is not avaiable/writeable right now.");
+                Log.v("TestFile", "SD card is not avaiable/writeable right now.");
                 return;
             }
-
-//            Bundle bundle = data.getExtras();
-//            Bitmap bitmap = (Bitmap) bundle.get("data");// 获取相机返回的数据，并转换为Bitmap图片格式
 
             BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
             bitmapOptions.inSampleSize = 1;
             File file = new File(getPhotopath());
-/**
- * 获取图片的旋转角度，有些系统把拍照的图片旋转了，有的没有旋转
- */
+
+            //获取图片的旋转角度，有些系统把拍照的图片旋转了，有的没有旋转
             int degree = readPictureDegree(file.getAbsolutePath());
             Bitmap cameraBitmap = BitmapFactory.decodeFile(getPhotopath(), bitmapOptions);
             Bitmap bitmap = cameraBitmap;
-/**
- * 把图片旋转为正的方向
- */
-//            bitmap = rotaingImageView(degree, bitmap);
 
-//            DisplayMetrics dm = new DisplayMetrics();
-//            getWindowManager().getDefaultDisplay().getMetrics(dm);
-//            Bitmap bitmap = getBitmapFromUrl(getPhotopath(), dm.widthPixels, dm.heightPixels);
-            bitmap = rotaingImageView(degree, bitmap);
-            //saveScalePhoto(bitmap);
-//            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//            delCacheImge();
+            bitmap = rotaingImageView(degree, bitmap);//把图片旋转为正的方向
             mImg.setImageBitmap(bitmap);// 将图片显示在ImageView里
             mNoimg.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NOIMG_REQUEST_CODE) {
+            afterImg(resultCode, data);
+        } else if (requestCode == QTYTYPE_REQUEST_CODE) {
+            if (data == null) return;
+            String accountType = data.getStringExtra("accountType");
+            if (Utils.StringEmpty(accountType)) return;
+            mTypeEdt.setText(accountType);
         }
     }
 

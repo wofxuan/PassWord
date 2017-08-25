@@ -66,6 +66,7 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
         navigationView.setNavigationItemSelectedListener(mIndexPre);
 
         mIndexPre.getFeedbackUnreadCount();
+        mIndexPre.autoBackup();
     }
 
     @Override
@@ -253,7 +254,6 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
                 String selectPath = data.getStringExtra("selectPath");
                 if (Utils.StringEmpty(selectPath)) return;
                 mIndexPre.backup(selectPath);
-
             } else if (requestCode == RESTORE_REQUEST_CODE) {
                 String filePath = data.getStringExtra("selectPath");
                 if (Utils.StringEmpty(filePath)) return;

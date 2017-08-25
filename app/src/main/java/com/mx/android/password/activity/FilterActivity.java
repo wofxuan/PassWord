@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.View;
 
 import com.mx.android.password.R;
 import com.mx.android.password.activity.base.BaseActivity;
@@ -17,14 +17,25 @@ import com.mx.android.password.entity.Constants;
 import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.presenter.FilterImpl;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 public class FilterActivity extends BaseActivity implements FilterAView {
     private static final int SUCCESS = 1;
     private static final int ERROR = 0;
 
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.filterView)
+    RecyclerView mRecyclerView;
+
     private PWFilterAdapter mAdapter;
     private FilterImpl mFilterImpl;
     private int result_code = 0;
+    private Boolean mIsShowAll;
+
+    @OnClick(R.id.cancelBtn)
+    public void onClick(View view) {
+        finishActivity();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +43,7 @@ public class FilterActivity extends BaseActivity implements FilterAView {
 
         Intent intent = getIntent();
         result_code = intent.getIntExtra("result_code", 0);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.filterView);
-        Button cancelbtn = (Button) findViewById(R.id.cancelBtn);
-        cancelbtn.setOnClickListener(v -> finishActivity());
+        mIsShowAll = intent.getBooleanExtra("ShowAll", true);
 
         mFilterImpl = new FilterImpl(this, this);
         mFilterImpl.onCreate(savedInstanceState);
@@ -65,6 +73,11 @@ public class FilterActivity extends BaseActivity implements FilterAView {
         intent.putExtra("accountType", mFilterImpl.getAccountType());
         setResult(result_code, intent);
         finish();
+    }
+
+    @Override
+    public boolean isShowAll() {
+        return mIsShowAll;
     }
 
     @Override

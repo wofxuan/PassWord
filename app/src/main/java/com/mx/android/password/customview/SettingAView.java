@@ -11,6 +11,7 @@ public interface SettingAView {
     void findView();
     void initState(boolean isOpen);
     void initOpenShow(boolean isOpen);
+    void initAutoBackup(boolean isOpen);
     void reCreate();
     void readyGo(Class clazz, Intent intent);
     void go2(Class clazz, Bundle bundle);

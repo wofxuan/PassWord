@@ -51,7 +51,7 @@ public class FilterImpl implements ActivityPresenter {
 
     protected void initData() {
         mDatas = PWDBHelper.getTypeList(mContext);
-        mDatas.add(0, FILTERALL);
+        if (mFilterView.isShowAll()) mDatas.add(0, FILTERALL);
     }
 
     @Override

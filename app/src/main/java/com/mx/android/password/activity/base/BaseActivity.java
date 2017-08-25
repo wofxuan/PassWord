@@ -13,10 +13,17 @@ import com.mx.android.password.entity.EventCenter;
 import com.mx.android.password.utils.ThemeUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Created by mxuan on 2016-07-10.
  */
 public abstract class BaseActivity extends Base {
+    private Unbinder binder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +32,24 @@ public abstract class BaseActivity extends Base {
 
         if (isApplyTranslucency()) initWindow();
         setContentView(getContentView());
-//        if (isApplyButterKnife()) ButterKnife.bind(this);
+        if (isApplyButterKnife()) binder = ButterKnife.bind(this);
         initToolbar();
-//        if (isApplyEventBus()) EventBus.getDefault().register(this);
+        if (isApplyEventBus()) EventBus.getDefault().register(this);
+    }
+
+    @Subscribe
+    public void onMessageEvent(EventCenter event) {
+        if (event != null) {
+            onEventComing(event);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        if (isApplyButterKnife()) binder.unbind();
+        if (isApplyEventBus()) EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     /**
@@ -95,6 +117,4 @@ public abstract class BaseActivity extends Base {
         }
         startActivity(intent);
     }
-
-
 }

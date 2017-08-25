@@ -16,7 +16,7 @@ import com.mx.android.password.customview.SettingAView;
 import com.mx.android.password.presenter.SettingFImpl;
 
 /**
- *  Created by mxuan on 2016-07-10.
+ * Created by mxuan on 2016-07-10.
  */
 public class SettingFragment extends PreferenceFragment implements SettingAView {
 
@@ -25,6 +25,8 @@ public class SettingFragment extends PreferenceFragment implements SettingAView 
     private SettingFImpl settingFImpl;
     private SwitchPreference openGesture;
     private SwitchPreference openShow;
+    private SwitchPreference autoBackup;
+
 
     public SettingFragment() {
         super();
@@ -72,6 +74,7 @@ public class SettingFragment extends PreferenceFragment implements SettingAView 
     public void findView() {
         openGesture = (SwitchPreference) findPreference("开启手势密码");
         openShow = (SwitchPreference) findPreference("首页密码可见");
+        autoBackup = (SwitchPreference) findPreference("自动备份");
     }
 
     @Override
@@ -82,6 +85,11 @@ public class SettingFragment extends PreferenceFragment implements SettingAView 
     @Override
     public void initOpenShow(boolean isOpen) {
         openShow.setChecked(isOpen);
+    }
+
+    @Override
+    public void initAutoBackup(boolean isOpen) {
+        autoBackup.setChecked(isOpen);
     }
 
     @Override

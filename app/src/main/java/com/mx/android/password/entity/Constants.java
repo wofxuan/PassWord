@@ -24,6 +24,6 @@ public class Constants {
     public final static class SETTING {
         public static String OPEN_GESTURE = "OPEN_GESTURE";
         public static String OPEN_PASS_WORD_SHOW = "OPEN_PASS_WORD_SHOW";
-        public static String SAVE_KEY = "SAVE_KEY";
+        public static String AUTO_BACKUP = "AUTO_BACKUP";
     }
 }
