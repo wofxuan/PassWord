@@ -130,6 +130,8 @@ public class PassWordPreImpl implements ActivityPresenter, NavigationView.OnNavi
         }
 
         PWDBHelper.backup(mContext, dirPath);
+        Toast toast = Toast.makeText(mContext, "自动备份成功", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public void restore(String filePath) {
