@@ -12,6 +12,5 @@ public interface LoginTypeFView {
     void hideException();
     void showException();
     void startDrag(RecyclerView.ViewHolder viewHolder);//拖动移动位置
-    void setToolBar(String mTitle);//设置标题
     void runUi(RecyclerView.Adapter adapter);//更新UI
 }

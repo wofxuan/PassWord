@@ -22,6 +22,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
+import static com.mx.android.password.entity.Constants.EVEN_BUS.INDEX_EVENT_SUCCESS;
+
 //import butterknife.Bind;
 
 /**
@@ -41,11 +43,6 @@ public class PWFragment extends BaseFragment implements LoginTypeFView {
     @Override
     public void startDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
-    }
-
-    @Override
-    public void setToolBar(String mTitle) {
-//        ((AppCompatActivity)mActivity).getActionBar().setTitle(mTitle);
     }
 
     @Override
@@ -137,8 +134,9 @@ public class PWFragment extends BaseFragment implements LoginTypeFView {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == INDEX_FRAGMENT_REQUEST_CODE) {
             if (resultCode == EDIT_SAVE && resultCode == SUCCESS) {
-                EventCenter eventCenter = new EventCenter(EDIT_SAVE, true);
+                EventCenter eventCenter = new EventCenter(INDEX_EVENT_SUCCESS, true);
                 EventBus.getDefault().post(eventCenter);
+//                setToolBar("");
             }
         }
     }

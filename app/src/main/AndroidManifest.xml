@@ -11,9 +11,8 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <!--Bugly检测bug日志-->
+    <!-- Bugly检测bug日志 -->
     <uses-permission android:name="android.permission.READ_LOGS" />
-
 
     <application
         android:name=".utils.MyApplication"
@@ -46,6 +45,7 @@
         <activity android:name=".activity.ImgActivity" />
         <activity android:name=".activity.FilterActivity" />
         <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.HelpActivity" />
     </application>
 
 </manifest>

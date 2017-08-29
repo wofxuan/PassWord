@@ -13,4 +13,7 @@ public interface PassWordAView {
     void restore();
     void kill();
     void closeNavTool();
+    void dataExport();
+    void dataImport();
+    void doHelp();
 }

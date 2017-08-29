@@ -32,6 +32,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+
+import static com.mx.android.password.entity.Constants.EVEN_BUS.CHANGE_THEME;
 import static com.mx.android.password.entity.Constants.EVEN_BUS.FILTER_EVENT_SUCCESS;
 import static com.mx.android.password.entity.Constants.EVEN_BUS.INDEX_EVENT_SUCCESS;
 import static com.mx.android.password.presenter.FilterImpl.FILTERALL;
@@ -42,26 +45,27 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
     private static final int BACKUP_REQUEST_CODE = 3;
     private static final int RESTORE_REQUEST_CODE = 4;
     private static final int FILTER_REQUEST_CODE = 5;
+    private static final int EXPORT_REQUEST_CODE = 6;
+    private static final int IMPORT_REQUEST_CODE = 7;
     private static final int EDIT_SAVE = 1;
+    @BindView(R.id.drawerLayout)
+    public DrawerLayout drawerLayout_main;
+    @BindView(R.id.navigationView)
+    public NavigationView navigationView;
     private int SUCCESS = 1;
     private PassWordPreImpl mIndexPre;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
-    private DrawerLayout drawerLayout_main;
-    private NavigationView navigationView;
     private Toolbar mToolBar;
     private MenuItem mMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        drawerLayout_main = (DrawerLayout) findViewById(R.id.drawerLayout);
-
         mIndexPre = new PassWordPreImpl(this, this);
         mIndexPre.onCreate(savedInstanceState);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         RxView.clicks(fab).throttleFirst(500, TimeUnit.MILLISECONDS).subscribe((aVoid) -> this.readyGoForResult(EditActivity.class));
 
-        navigationView = (NavigationView) findViewById(R.id.navigationView);
 //        navigationView.setCheckedItem(R.id.nav_login_type);
         navigationView.setNavigationItemSelectedListener(mIndexPre);
 
@@ -190,51 +194,77 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
     }
 
     @Override
-    public void backup() {
+    public void doHelp() {
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void dataExport() {
+        Intent intent = new Intent(this, DFSelectActivity.class);
+        intent.putExtra("type", 2);
+        intent.putExtra("result_code", EXPORT_REQUEST_CODE);
+        intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
+
+        showAlertDialog("导出", "是否确定导出当前数据？", intent, EXPORT_REQUEST_CODE);
+    }
+
+    @Override
+    public void dataImport() {
+        Intent intent = new Intent(this, DFSelectActivity.class);
+        intent.putExtra("type", 1);
+        intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
+        intent.putExtra("fileType", new String[]{"txt"});
+        intent.putExtra("result_code", IMPORT_REQUEST_CODE);
+
+        showAlertDialog("导入", "是否确定导入数据到当前程序？", intent, IMPORT_REQUEST_CODE);
+    }
+
+
+    private void showAlertDialog(String title, String message, Intent intent, int requestCode) {
         android.support.v7.app.AlertDialog.Builder builder = null;
         builder = new android.support.v7.app.AlertDialog.Builder(this);
-        builder.setTitle("备份");
-        builder.setMessage("是否确定备份当前数据？");
+        builder.setTitle(title);
+        builder.setMessage(message);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", (DialogInterface dialog, int which) -> {
-            Intent intent = new Intent(this, DFSelectActivity.class);
-            intent.putExtra("type", 2);
-            intent.putExtra("result_code", BACKUP_REQUEST_CODE);
-            intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
-            startActivityForResult(intent, BACKUP_REQUEST_CODE);
+            if (intent != null) startActivityForResult(intent, requestCode);
         });
         builder.show();
+    }
+
+    @Override
+    public void backup() {
+        Intent intent = new Intent(this, DFSelectActivity.class);
+        intent.putExtra("type", 2);
+        intent.putExtra("result_code", BACKUP_REQUEST_CODE);
+        intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
+
+        showAlertDialog("备份", "是否确定备份当前数据？", intent, BACKUP_REQUEST_CODE);
     }
 
     @Override
     public void restore() {
-        android.support.v7.app.AlertDialog.Builder builder = null;
-        builder = new android.support.v7.app.AlertDialog.Builder(this);
-        builder.setTitle("还原");
-        builder.setMessage("还原后当前数据将被清除，切无法恢复，是否确定还原？");
-        builder.setNegativeButton("取消", null);
-        builder.setPositiveButton("确定", (DialogInterface dialog, int which) -> {
-            Intent intent = new Intent(this, DFSelectActivity.class);
-            intent.putExtra("type", 1);
-            intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
-            intent.putExtra("fileType", new String[]{"db"});
-            intent.putExtra("result_code", RESTORE_REQUEST_CODE);
-            startActivityForResult(intent, RESTORE_REQUEST_CODE);
-        });
-        builder.show();
+        Intent intent = new Intent(this, DFSelectActivity.class);
+        intent.putExtra("type", 1);
+        intent.putExtra("defaultDir", ((MyApplication) getApplication()).GetBackdir());
+        intent.putExtra("fileType", new String[]{"db"});
+        intent.putExtra("result_code", RESTORE_REQUEST_CODE);
+
+        showAlertDialog("还原", "原后当前数据将被清除，且无法恢复，是否确定还原？", intent, RESTORE_REQUEST_CODE);
     }
 
     @Override
     protected void onEventComing(EventCenter eventCenter) {
-        if (eventCenter.getEventCode() == Constants.EVEN_BUS.CHANGE_THEME) {
+        if (eventCenter.getEventCode() == CHANGE_THEME) {
             reload(false);
+        } else if (eventCenter.getEventCode() == INDEX_EVENT_SUCCESS) {
+            mToolBar.setTitle(getString(R.string.app_name));
+        } else if (eventCenter.getEventCode() == FILTER_EVENT_SUCCESS) {
+            String accountType = (String) eventCenter.getData();
+            if (accountType.equals("")) accountType = getString(R.string.app_name);
+            mToolBar.setTitle(accountType);
         }
-    }
-
-    protected void setFilterTitle(String Title){
-        if(Title.equals("")) Title = getString(R.string.app_name);
-//        mMenuItem.setTitle(Title);
-        mToolBar.setTitle(Title);
     }
 
     @Override
@@ -244,7 +274,6 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             if (resultCode == EDIT_SAVE && resultCode == SUCCESS) {
                 EventCenter eventCenter = new EventCenter(INDEX_EVENT_SUCCESS, true);
                 EventBus.getDefault().post(eventCenter);
-                setFilterTitle(getString(R.string.app_name));
             }
         } else if (requestCode == SETTING_REQUEST_CODE) {
 
@@ -261,11 +290,18 @@ public class PassWordActivity extends BaseActivity implements PassWordAView {
             } else if (requestCode == FILTER_REQUEST_CODE) {
                 String accountType = data.getStringExtra("accountType");
                 if (Utils.StringEmpty(accountType)) return;
-                if(accountType.equals(FILTERALL)) accountType = "";
+                if (accountType.equals(FILTERALL)) accountType = "";
 //                CrashReport.testJavaCrash();
                 EventCenter eventCenter = new EventCenter(FILTER_EVENT_SUCCESS, accountType);
                 EventBus.getDefault().post(eventCenter);
-                setFilterTitle(accountType);
+            } else if (requestCode == EXPORT_REQUEST_CODE) {
+                String selectPath = data.getStringExtra("selectPath");
+                if (Utils.StringEmpty(selectPath)) return;
+                mIndexPre.dataExport(selectPath);
+            } else if (requestCode == IMPORT_REQUEST_CODE) {
+                String selectPath = data.getStringExtra("selectPath");
+                if (Utils.StringEmpty(selectPath)) return;
+                mIndexPre.dataImport(selectPath);
             }
         }
     }

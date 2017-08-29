@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single"
-        android:id="@+id/menu_id">
+    <group
+        android:id="@+id/menu_id"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_backup"
             android:icon="@drawable/ic_menu_save"
@@ -11,6 +12,18 @@
             android:id="@+id/nav_restore"
             android:icon="@drawable/ic_menu_upload"
             android:title="还原" />
+        <item
+            android:id="@+id/nav_export"
+            android:icon="@drawable/ic_menu_set_as"
+            android:title="导出到文本" />
+        <item
+            android:id="@+id/nav_import"
+            android:icon="@drawable/ic_menu_send"
+            android:title="从文本导入" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_menu_help"
+            android:title="功能说明" />
     </group>
 
     <item android:title="系统功能">

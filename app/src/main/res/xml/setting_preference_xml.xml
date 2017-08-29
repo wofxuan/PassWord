@@ -12,6 +12,7 @@
         <com.jenzz.materialpreference.SwitchPreference
             android:defaultValue="true"
             android:key="自动备份"
+            android:summary="每天第一次登陆自动备份"
             android:title="自动备份" />
         <com.jenzz.materialpreference.Preference
             android:key="修改手势密码"
